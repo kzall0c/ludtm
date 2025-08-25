@@ -128,7 +128,7 @@ void make_coredump(char buf[])
 
 void segfault()
 {
-	int *a = 1;
+	int *a = (int *) 1;
 	*a = 1;
 }
 
@@ -177,28 +177,24 @@ void heap_overflow()
 	memset(pp, 'X', BIG_NUM * BIG_NUM);
 }
 
+#define YUNSEONG_EMAIL "Yunseong Kim <ysk@kzalloc.com>"
+static char *mem_leak_p;
+
 void mem_leak()
 {
-	int i, n = 0;
-	char *pp[BIG_NUM];
+	struct alloc {
+		unsigned long cnt;
+		unsigned long bytes;
+	} alloc = { 0, };
 
-	for (n = 0; n < BIG_NUM * BIG_NUM; n++)
-	{
-		pp[n] = malloc(sizeof(devcourse_mailing_list) * 4);
-		if (pp[n] == NULL)
-			break;
-	}
-	printf("malloc failure after %d MiB\n", n);
+	do {
+		mem_leak_p = (char *) malloc(sizeof(YUNSEONG_EMAIL));
+		memcpy(mem_leak_p, YUNSEONG_EMAIL, sizeof(YUNSEONG_EMAIL));
+		alloc.cnt++;
+		alloc.bytes += sizeof(YUNSEONG_EMAIL);
 
-	for (i = 0; i < n; i++)
-	{
-		snprintf(pp[i],
-			devcourse_mailing_list,
-			devcourse_mailing_list,
-			devcourse_mailing_list,
-			devcourse_mailing_list,
-			"%s%s%s%s");
-	}
+	} while(mem_leak_p);
+	printf("malloc failure after Number of %ul, Bytes:%ul\n", alloc.cnt, alloc.bytes);
 }
 
 void double_free() {
@@ -251,8 +247,6 @@ void list_use_case()
 		list_del(&iter->list);
 		free(iter);
 	}
-
-	return 0;
 }
 
 #ifndef NUM_THREADS
@@ -368,8 +362,6 @@ void wrong_funtion_pointer()
 	int notfun;
 	void (*fun_ptr)(int) = &fun;
 	(*fun_ptr)(10);
-	int (*notfun_ptr)(char*) = &notfun;
-	(*notfun_ptr)('i am groot');
 }
 
 void ssu_show_limit(int rlim_type, char *rlim_name);

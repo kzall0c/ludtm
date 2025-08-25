@@ -13,6 +13,9 @@
  * 3. add macro offsetof() and container_of
  *
  * - kazutomo@mcs.anl.gov
+ *
+ * Now updated to be compatible with GCC 15
+ * - Yunseong Kim <ysk@kzalloc.com>
  */
 #ifndef _LINUX_LIST_H
 #define _LINUX_LIST_H
@@ -25,7 +28,13 @@
 /**
  * Get offset of a member
  */
-#define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+// #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
+
+#if defined(__GNUC__) || defined(__clang__)
+#define prefetch(x) __builtin_prefetch(x)
+#else
+#define prefetch(x) do {} while (0)
+#endif
 
 /**
  * Casts a member of a structure out to the containing structure
