@@ -10,6 +10,9 @@ $(TGT): $(OBJS)
 test: $(TGT)
 	./$(TGT)
 
+slist:
+	$(CC) -ggdb -O0 slist.c -o slist
+
 list:
 	 $(CC) -ggdb -O0 list.c -o list
 
