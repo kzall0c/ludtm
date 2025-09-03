@@ -19,6 +19,12 @@ hashmap:
 lru:
 	 $(CC) -ggdb -O0 lru.c -o lru
 
+rbtree:
+	 $(CC) -ggdb -O0 rbtree.c -o rbtree
+
+btree:
+	 $(CC) -ggdb -O0 btree.c -o btree
+
 .PHONY: clean
 clean:
 	@rm -rf $(OBJS) $(TGT)
